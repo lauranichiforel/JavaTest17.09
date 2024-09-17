@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EventRepository implements IEventRepository {
@@ -20,4 +21,28 @@ public class EventRepository implements IEventRepository {
         return event;
     }
 
+    @Override
+    public Optional<Event> findById(Long id) {
+        return events.stream().filter(e -> e.getId().equals(id)).findFirst();
+    }
+
+    @Override
+    public Event update(Long id, Event updatedEvent) {
+        Optional<Event> existingEvent = findById(id);
+        if (existingEvent.isPresent()) {
+            Event event = existingEvent.get();
+            event.setTitle(updatedEvent.getTitle());
+            event.setDescription(updatedEvent.getDescription());
+            event.setStartTime(updatedEvent.getStartTime());
+            event.setEndTime(updatedEvent.getEndTime());
+            event.setAttendees(updatedEvent.getAttendees());
+            return event;
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        events.removeIf(event -> event.getId().equals(id));
+    }
 }
